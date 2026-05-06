@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { DatabaseError } from "@/components/database-error";
 import { FeedbackBanner } from "@/components/feedback-banner";
-import { PageHeader } from "@/components/page-header";
 import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
 import { ITEM_TEMPLATE_OPTIONS, QUICK_PRICE_OPTIONS } from "@/lib/demo-options";
@@ -36,11 +35,7 @@ export const dynamic = "force-dynamic";
 type SearchParamValue = string | string[] | undefined;
 
 function getSingleValue(value: SearchParamValue): string | undefined {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
+  return Array.isArray(value) ? value[0] : value;
 }
 
 function FilterLink({
@@ -55,14 +50,44 @@ function FilterLink({
   return (
     <Link
       href={href}
-      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+      className={`rounded-[6px] px-3 py-2 text-sm font-semibold ${
         active
-          ? "bg-slate-950 text-white shadow-lg shadow-slate-950/15"
-          : "bg-white text-slate-700 hover:bg-slate-100"
+          ? "bg-sky-500 text-white shadow-lg shadow-sky-950/25"
+          : "bg-white/[0.06] text-slate-300 hover:bg-white/[0.1] hover:text-white"
       }`}
     >
       {label}
     </Link>
+  );
+}
+
+function ItemCard({ item }: { item: ItemRecord }) {
+  return (
+    <article className="group rounded-[8px] border border-white/10 bg-slate-950/54 p-4 shadow-[0_18px_36px_rgba(0,0,0,0.18)]">
+      <div className="flex h-24 items-center justify-center rounded-[6px] border border-white/8 bg-[linear-gradient(135deg,rgba(51,65,85,0.9),rgba(15,23,42,0.95))] text-slate-400">
+        <span className="font-mono text-xs">{item.item_id}</span>
+      </div>
+      <div className="mt-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate text-sm font-semibold text-white">{item.item_name}</h3>
+          <p className="mt-1 truncate text-xs text-slate-400">
+            {getCategoryDisplay(item.category)}
+          </p>
+        </div>
+        <StatusBadge status={item.status} />
+      </div>
+      <div className="mt-4 flex items-end justify-between">
+        <div>
+          <p className="text-xs text-slate-500">卖家</p>
+          <p className="mt-1 text-xs font-medium text-slate-300">
+            {item.seller_name ?? item.seller_id}
+          </p>
+        </div>
+        <p className="font-mono text-base font-semibold text-rose-300">
+          {formatPrice(item.price)}
+        </p>
+      </div>
+    </article>
   );
 }
 
@@ -75,7 +100,7 @@ function ItemTable({
 }) {
   if (items.length === 0) {
     return (
-      <div className="rounded-[24px] border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+      <div className="rounded-[8px] border border-dashed border-white/15 bg-white/[0.03] px-4 py-6 text-sm text-slate-400">
         {emptyMessage}
       </div>
     );
@@ -105,7 +130,7 @@ function ItemTable({
                 <StatusBadge status={item.status} />
               </td>
               <td>
-                <div className="font-medium text-slate-900">
+                <div className="font-medium text-white">
                   {item.seller_name ?? item.seller_id}
                 </div>
                 <div className="font-mono text-xs text-slate-500">{item.seller_id}</div>
@@ -149,136 +174,131 @@ export default async function ItemsPage({
   const hasUnsoldItems = unsoldItemsView.length > 0;
   const today = getTodayDateString();
   const soldItems = allItems.filter((item) => item.status === 1);
-  const highestPrice = allItems.length
-    ? Math.max(...allItems.map((item) => item.price))
-    : 0;
+  const latestItems = allItems.slice(-5).reverse();
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        eyebrow="Items"
-        title="商品中心"
-        description="浏览库存、发布商品、定价、删除未售商品，并直接完成购买。"
-        actions={
-          <>
+    <div className="space-y-5">
+      <section className="grid gap-4 xl:grid-cols-[1fr_230px]">
+        <div className="book-hero min-h-[220px] rounded-[8px] border border-white/10 p-6 shadow-[0_22px_56px_rgba(0,0,0,0.28)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
+            Campus Used Books
+          </p>
+          <h2 className="mt-8 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            让闲置流动，让校园更美好
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-slate-200">
+            图书、教材、宿舍好物都可以在这里发布和购买。
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a href="#publish" className="action-button">
+              发布商品
+            </a>
             <Link href="/orders" className="secondary-button">
-              查看订单结果
+              查看订单
             </Link>
-            <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-900">
-              用户自助操作已开启
-            </span>
-          </>
-        }
-      />
+          </div>
+        </div>
+
+        <aside className="grid gap-3 rounded-[8px] border border-white/10 bg-slate-950/50 p-4">
+          <div>
+            <p className="text-xs text-slate-500">全部商品</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-white">
+              {allItems.length}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-slate-500">待售库存</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-emerald-200">
+              {unsoldItemsView.length}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-slate-500">已成交</p>
+            <p className="mt-1 font-mono text-2xl font-semibold text-rose-200">
+              {soldItems.length}
+            </p>
+          </div>
+        </aside>
+      </section>
 
       {successMessage ? <FeedbackBanner type="success" message={successMessage} /> : null}
       {errorMessage ? <FeedbackBanner type="error" message={errorMessage} /> : null}
 
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <div className="soft-card">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">全部商品</p>
-          <p className="mt-3 font-mono text-3xl font-semibold text-slate-950">
-            {allItems.length}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">当前商品表中的总记录数。</p>
-        </div>
-        <div className="soft-card">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">待售库存</p>
-          <p className="mt-3 font-mono text-3xl font-semibold text-slate-950">
-            {unsoldItemsView.length}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">仍可购买的商品数量。</p>
-        </div>
-        <div className="soft-card">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">已成交</p>
-          <p className="mt-3 font-mono text-3xl font-semibold text-slate-950">
-            {soldItems.length}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">已有订单的商品数量。</p>
-        </div>
-        <div className="soft-card">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">最高价</p>
-          <p className="mt-3 font-mono text-3xl font-semibold text-slate-950">
-            {formatPrice(highestPrice)}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">用于快速查看当前价位区间。</p>
-        </div>
-      </section>
-
-      <div className="grid gap-6 xl:grid-cols-[1.14fr_0.86fr]">
-        <SectionCard
-          title="筛选浏览"
-          description={getFilterDescription(activeFilter)}
-          headerExtra={<span className="chip">当前：{getFilterLabel(activeFilter)}</span>}
-        >
-          <div className="mb-5 flex flex-wrap gap-3">
-            <FilterLink href="/items?filter=all" label="全部商品" active={activeFilter === "all"} />
-            <FilterLink
-              href="/items?filter=unsold"
-              label="未售出"
-              active={activeFilter === "unsold"}
-            />
-            <FilterLink
-              href="/items?filter=price_gt_30"
-              label="价格大于 30"
-              active={activeFilter === "price_gt_30"}
-            />
-            <FilterLink
-              href="/items?filter=daily_goods"
-              label="生活用品"
-              active={activeFilter === "daily_goods"}
-            />
-            <FilterLink
-              href="/items?filter=seller_u001"
-              label="u001 发布"
-              active={activeFilter === "seller_u001"}
-            />
+      <section className="grid gap-4 xl:grid-cols-[1fr_250px]">
+        <div className="glass-panel p-5">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-white">最新商品</h2>
+              <p className="mt-1 text-sm text-slate-400">优先展示最近发布的校园交易商品。</p>
+            </div>
+            <span className="chip">{getFilterLabel(activeFilter)}</span>
           </div>
-
-          <ItemTable items={filteredItems} emptyMessage="当前筛选条件下没有查询到商品。" />
-        </SectionCard>
-
-        <SectionCard title="库存快照" description="优先展示当前最适合交易的商品。">
-          <div className="space-y-3">
-            {unsoldItemsView.slice(0, 4).map((item) => (
-              <div
-                key={item.item_id}
-                className="rounded-[22px] border border-black/5 bg-white/85 px-4 py-4"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-slate-950">{item.item_name}</p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {item.item_id} · {item.seller_name}
-                    </p>
-                  </div>
-                  <StatusBadge status={item.status} />
-                </div>
-                <div className="mt-3 flex items-center justify-between text-sm text-slate-600">
-                  <span>{getCategoryDisplay(item.category)}</span>
-                  <span className="font-mono font-semibold text-slate-950">
-                    {formatPrice(item.price)}
-                  </span>
-                </div>
-              </div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {latestItems.map((item) => (
+              <ItemCard key={item.item_id} item={item} />
             ))}
           </div>
-        </SectionCard>
-      </div>
+        </div>
+
+        <aside className="space-y-4">
+          <div className="soft-card">
+            <p className="text-sm font-semibold text-white">系统公告</p>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-400">
+              <li>购买会写入 orders 表。</li>
+              <li>商品售出后状态自动更新。</li>
+              <li>同一商品只能成交一次。</li>
+            </ul>
+          </div>
+          <div className="soft-card">
+            <p className="text-sm font-semibold text-white">订单入口</p>
+            <Link href="/orders" className="mt-3 inline-flex text-sm font-semibold text-cyan-300">
+              查看成交明细
+            </Link>
+          </div>
+        </aside>
+      </section>
+
+      <SectionCard
+        title="商品筛选"
+        description={getFilterDescription(activeFilter)}
+        headerExtra={<span className="chip">当前：{getFilterLabel(activeFilter)}</span>}
+      >
+        <div className="mb-5 flex flex-wrap gap-3">
+          <FilterLink href="/items?filter=all" label="全部商品" active={activeFilter === "all"} />
+          <FilterLink href="/items?filter=unsold" label="未售出" active={activeFilter === "unsold"} />
+          <FilterLink
+            href="/items?filter=price_gt_30"
+            label="价格大于 30"
+            active={activeFilter === "price_gt_30"}
+          />
+          <FilterLink
+            href="/items?filter=daily_goods"
+            label="生活用品"
+            active={activeFilter === "daily_goods"}
+          />
+          <FilterLink
+            href="/items?filter=seller_u001"
+            label="u001 发布"
+            active={activeFilter === "seller_u001"}
+          />
+        </div>
+        <ItemTable items={filteredItems} emptyMessage="当前筛选条件下没有商品。" />
+      </SectionCard>
 
       <SectionCard
         title="用户操作区"
-        description="所有写操作都开放给用户使用，优先用下拉与模板来减少输入。"
+        description="发布、定价、删除和购买操作都会同步到数据库。"
+        className="scroll-mt-5"
       >
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div id="publish" className="grid gap-5 xl:grid-cols-2">
           <form action={createItemAction} className="soft-card space-y-4">
             <div>
-              <p className="text-lg font-semibold text-slate-950">发布商品</p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="text-lg font-semibold text-white">发布商品</p>
+              <p className="mt-1 text-sm text-slate-400">
                 下一条编号预计为 <span className="font-mono">{nextItemId}</span>
               </p>
             </div>
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               上架模板
               <select name="templateId" className="form-field" defaultValue="">
                 <option value="">不使用模板，手动填写</option>
@@ -289,16 +309,12 @@ export default async function ItemsPage({
                 ))}
               </select>
             </label>
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               商品名称
-              <input
-                name="itemName"
-                className="form-field"
-                placeholder="模板可自动带出，需自定义时再填写"
-              />
+              <input name="itemName" className="form-field" placeholder="例如 DatabaseBook" />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium text-slate-700">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 分类
                 <select name="category" className="form-field" defaultValue="">
                   <option value="">沿用模板分类</option>
@@ -309,7 +325,7 @@ export default async function ItemsPage({
                   <option value="Other">其他</option>
                 </select>
               </label>
-              <label className="space-y-2 text-sm font-medium text-slate-700">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 发布用户
                 <select name="sellerId" className="form-field" defaultValue="u001">
                   {users.map((user) => (
@@ -321,7 +337,7 @@ export default async function ItemsPage({
               </label>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium text-slate-700">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 快捷价格
                 <select name="quickPrice" className="form-field" defaultValue="">
                   <option value="">沿用模板价格</option>
@@ -332,16 +348,9 @@ export default async function ItemsPage({
                   ))}
                 </select>
               </label>
-              <label className="space-y-2 text-sm font-medium text-slate-700">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 手动价格
-                <input
-                  name="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  className="form-field"
-                  placeholder="需要覆盖时再填写"
-                />
+                <input name="price" type="number" min="0" step="0.01" className="form-field" />
               </label>
             </div>
             <button type="submit" className="action-button">
@@ -349,93 +358,12 @@ export default async function ItemsPage({
             </button>
           </form>
 
-          <form action={updateItemPriceAction} className="soft-card space-y-4">
+          <form action={purchaseItemAction} className="soft-card space-y-4">
             <div>
-              <p className="text-lg font-semibold text-slate-950">给商品定价</p>
-              <p className="mt-1 text-sm text-slate-500">先选商品，再选快捷价格或手动输入。</p>
+              <p className="text-lg font-semibold text-white">购买商品</p>
+              <p className="mt-1 text-sm text-slate-400">调用数据库 purchase_item 函数。</p>
             </div>
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
-              商品
-              <select name="itemId" className="form-field" defaultValue="">
-                <option value="" disabled>
-                  请选择商品
-                </option>
-                {allItems.map((item) => (
-                  <option key={item.item_id} value={item.item_id}>
-                    {item.item_name} ({item.item_id})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium text-slate-700">
-                快捷价格
-                <select name="quickPrice" className="form-field" defaultValue="">
-                  <option value="">请选择</option>
-                  {QUICK_PRICE_OPTIONS.map((price) => (
-                    <option key={price} value={price}>
-                      {price} 元
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="space-y-2 text-sm font-medium text-slate-700">
-                手动价格
-                <input
-                  name="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  className="form-field"
-                  placeholder="优先于快捷价格"
-                />
-              </label>
-            </div>
-            <button type="submit" className="action-button">
-              更新价格
-            </button>
-          </form>
-
-          <form action={deleteUnsoldItemAction} className="soft-card space-y-4">
-            <div>
-              <p className="text-lg font-semibold text-slate-950">删除未售商品</p>
-              <p className="mt-1 text-sm text-slate-500">只允许删除 status = 0 的记录。</p>
-            </div>
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
-              选择未售商品
-              <select
-                name="itemId"
-                className="form-field"
-                defaultValue=""
-                disabled={!hasUnsoldItems}
-              >
-                <option value="" disabled>
-                  {hasUnsoldItems ? "请选择商品" : "暂无未售商品"}
-                </option>
-                {unsoldItemsView.map((item) => (
-                  <option key={item.item_id} value={item.item_id}>
-                    {item.item_name} ({item.item_id})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              type="submit"
-              className={`action-button ${!hasUnsoldItems ? "cursor-not-allowed opacity-50" : ""}`}
-              disabled={!hasUnsoldItems}
-            >
-              删除商品
-            </button>
-          </form>
-
-          <form action={purchaseItemAction} className="soft-card space-y-4 bg-slate-950 text-white">
-            <div>
-              <p className="text-lg font-semibold">购买商品</p>
-              <p className="mt-1 text-sm text-slate-300">
-                购买会直接调用数据库中的 `purchase_item(...)` 函数。
-              </p>
-            </div>
-            <label className="block space-y-2 text-sm font-medium text-slate-200">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               商品
               <select
                 name="itemId"
@@ -454,7 +382,7 @@ export default async function ItemsPage({
               </select>
             </label>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium text-slate-200">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 买家
                 <select name="buyerId" className="form-field" defaultValue="u001">
                   {users.map((user) => (
@@ -464,30 +392,95 @@ export default async function ItemsPage({
                   ))}
                 </select>
               </label>
-              <label className="space-y-2 text-sm font-medium text-slate-200">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
                 日期
-                <input
-                  name="orderDate"
-                  type="date"
-                  defaultValue={today}
-                  className="form-field"
-                />
+                <input name="orderDate" type="date" defaultValue={today} className="form-field" />
               </label>
             </div>
             <button
               type="submit"
-              className={`rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300 ${
-                !hasUnsoldItems ? "cursor-not-allowed opacity-50" : ""
-              }`}
+              className={`action-button ${!hasUnsoldItems ? "cursor-not-allowed opacity-50" : ""}`}
               disabled={!hasUnsoldItems}
             >
               执行购买
             </button>
           </form>
+
+          <form action={updateItemPriceAction} className="soft-card space-y-4">
+            <div>
+              <p className="text-lg font-semibold text-white">商品定价</p>
+              <p className="mt-1 text-sm text-slate-400">先选商品，再更新价格。</p>
+            </div>
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
+              商品
+              <select name="itemId" className="form-field" defaultValue="">
+                <option value="" disabled>
+                  请选择商品
+                </option>
+                {allItems.map((item) => (
+                  <option key={item.item_id} value={item.item_id}>
+                    {item.item_name} ({item.item_id})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="space-y-2 text-sm font-medium text-slate-300">
+                快捷价格
+                <select name="quickPrice" className="form-field" defaultValue="">
+                  <option value="">请选择</option>
+                  {QUICK_PRICE_OPTIONS.map((price) => (
+                    <option key={price} value={price}>
+                      {price} 元
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="space-y-2 text-sm font-medium text-slate-300">
+                手动价格
+                <input name="price" type="number" min="0" step="0.01" className="form-field" />
+              </label>
+            </div>
+            <button type="submit" className="secondary-button">
+              更新价格
+            </button>
+          </form>
+
+          <form action={deleteUnsoldItemAction} className="soft-card space-y-4">
+            <div>
+              <p className="text-lg font-semibold text-white">删除未售商品</p>
+              <p className="mt-1 text-sm text-slate-400">仅允许删除 status = 0 的记录。</p>
+            </div>
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
+              未售商品
+              <select
+                name="itemId"
+                className="form-field"
+                defaultValue=""
+                disabled={!hasUnsoldItems}
+              >
+                <option value="" disabled>
+                  {hasUnsoldItems ? "请选择商品" : "暂无未售商品"}
+                </option>
+                {unsoldItemsView.map((item) => (
+                  <option key={item.item_id} value={item.item_id}>
+                    {item.item_name} ({item.item_id})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="submit"
+              className={`secondary-button ${!hasUnsoldItems ? "cursor-not-allowed opacity-50" : ""}`}
+              disabled={!hasUnsoldItems}
+            >
+              删除商品
+            </button>
+          </form>
         </div>
       </SectionCard>
 
-      <SectionCard title="完整商品表" description="刷新页面后，所有写操作都会直接反映在这里。">
+      <SectionCard title="完整商品表" description="刷新页面后，写操作会直接反映在这里。">
         <ItemTable items={allItems} emptyMessage="当前数据库中还没有商品。" />
       </SectionCard>
     </div>

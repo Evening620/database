@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "db:setup": "node scripts/setup-db.mjs",
+    "db:fix-purchase": "node scripts/apply-purchase-logic.mjs",
     "db:check": "node scripts/check-db.mjs"
   },
   "engines": {

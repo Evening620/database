@@ -15,8 +15,8 @@ export function DatabaseError({
         <p className="text-xs font-semibold uppercase tracking-[0.32em] text-rose-600">
           Connection Error
         </p>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
-        <p className="text-sm leading-7 text-slate-600">
+        <h2 className="text-2xl font-semibold tracking-tight text-white">{title}</h2>
+        <p className="text-sm leading-7 text-slate-300">
           当前页面只读取真实 PostgreSQL。请确认
           <code className="mx-1 rounded bg-slate-900 px-1.5 py-0.5 text-slate-100">
             DATABASE_URL
@@ -32,13 +32,13 @@ export function DatabaseError({
       <div className="flex flex-wrap gap-3">
         <Link
           href="/"
-          className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-[6px] bg-sky-500 px-4 py-2 text-sm font-semibold text-white"
         >
           返回首页
         </Link>
         <a
           href="https://vercel.com"
-          className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"
+          className="rounded-[6px] border border-white/10 px-4 py-2 text-sm font-semibold text-slate-200"
           target="_blank"
           rel="noreferrer"
         >

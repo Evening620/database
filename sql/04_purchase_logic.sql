@@ -25,10 +25,10 @@ BEGIN
     RAISE EXCEPTION '买家 % 不存在。', p_buyer_id;
   END IF;
 
-  SELECT status
+  SELECT i.status
   INTO v_status
-  FROM item
-  WHERE item_id = p_item_id
+  FROM item AS i
+  WHERE i.item_id = p_item_id
   FOR UPDATE;
 
   IF NOT FOUND THEN
@@ -41,9 +41,9 @@ BEGIN
 
   v_order_id := next_order_id();
 
-  UPDATE item
+  UPDATE item AS i
   SET status = 1
-  WHERE item_id = p_item_id;
+  WHERE i.item_id = p_item_id;
 
   INSERT INTO orders (order_id, item_id, buyer_id, order_date)
   VALUES (v_order_id, p_item_id, p_buyer_id, COALESCE(p_order_date, CURRENT_DATE));
