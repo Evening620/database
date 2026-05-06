@@ -10,9 +10,9 @@
 html {
   min-height: 100%;
   background:
-    radial-gradient(circle at 12% 4%, rgba(42, 196, 255, 0.22), transparent 28%),
-    radial-gradient(circle at 86% 0%, rgba(239, 68, 68, 0.16), transparent 22%),
-    linear-gradient(135deg, #182238 0%, #121a2b 46%, #090e18 100%);
+    radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.24), transparent 30%),
+    radial-gradient(circle at 88% 0%, rgba(244, 114, 182, 0.14), transparent 24%),
+    linear-gradient(135deg, #24364f 0%, #1b2940 42%, #141f33 100%);
 }
 
 body {
@@ -42,27 +42,27 @@ select {
 
 @layer components {
   .app-shell {
-    @apply min-h-screen px-4 py-4 md:px-6 md:py-6;
+    @apply min-h-screen px-3 py-3 md:px-5 md:py-5;
   }
 
   .browser-frame {
-    @apply mx-auto grid max-w-7xl gap-4 rounded-[8px] border border-white/10 bg-slate-950/70 p-3 shadow-[0_28px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl lg:grid-cols-[210px_1fr];
+    @apply mx-auto grid w-full max-w-[1680px] gap-5 rounded-[8px] border border-white/14 bg-slate-900/72 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.32)] backdrop-blur-xl lg:grid-cols-[250px_minmax(0,1fr)];
   }
 
   .sidebar-panel {
-    @apply rounded-[6px] border border-white/8 bg-slate-950/58 p-4;
+    @apply rounded-[6px] border border-white/12 bg-slate-900/68 p-5;
   }
 
   .content-panel {
-    @apply min-w-0 rounded-[6px] border border-white/8 bg-slate-900/36 p-4 md:p-5;
+    @apply min-w-0 rounded-[6px] border border-white/12 bg-slate-800/46 p-4 md:p-6;
   }
 
   .glass-panel {
-    @apply rounded-[8px] border border-white/10 bg-slate-900/62 shadow-[0_18px_44px_rgba(0,0,0,0.18)] backdrop-blur-md;
+    @apply rounded-[8px] border border-white/14 bg-slate-800/66 shadow-[0_18px_44px_rgba(0,0,0,0.16)] backdrop-blur-md;
   }
 
   .table-wrap {
-    @apply overflow-hidden rounded-[8px] border border-white/10 bg-slate-950/36;
+    @apply overflow-x-auto rounded-[8px] border border-white/14 bg-slate-900/36;
   }
 
   .table-base {
@@ -78,7 +78,7 @@ select {
   }
 
   .table-base td {
-    @apply px-4 py-3 align-top text-slate-200;
+    @apply px-4 py-3 align-top text-slate-100;
   }
 
   .table-base tbody tr {
@@ -90,7 +90,7 @@ select {
   }
 
   .form-field {
-    @apply w-full rounded-[6px] border border-white/10 bg-slate-950/72 px-3 py-2.5 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-sky-400;
+    @apply w-full rounded-[6px] border border-white/14 bg-slate-900/72 px-3 py-2.5 text-sm text-white outline-none ring-0 placeholder:text-slate-400 focus:border-sky-300;
   }
 
   .action-button {
@@ -102,7 +102,7 @@ select {
   }
 
   .soft-card {
-    @apply rounded-[8px] border border-white/10 bg-slate-950/42 p-5;
+    @apply rounded-[8px] border border-white/14 bg-slate-800/54 p-5;
   }
 
   .chip {
@@ -111,7 +111,7 @@ select {
 
   .book-hero {
     background-image:
-      linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.34)),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.18)),
       url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1400&q=80");
     background-position: center;
     background-size: cover;

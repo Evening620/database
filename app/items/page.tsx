@@ -63,20 +63,22 @@ function FilterLink({
 
 function ItemCard({ item }: { item: ItemRecord }) {
   return (
-    <article className="group rounded-[8px] border border-white/10 bg-slate-950/54 p-4 shadow-[0_18px_36px_rgba(0,0,0,0.18)]">
-      <div className="flex h-24 items-center justify-center rounded-[6px] border border-white/8 bg-[linear-gradient(135deg,rgba(51,65,85,0.9),rgba(15,23,42,0.95))] text-slate-400">
+    <article className="group flex min-h-[270px] flex-col rounded-[8px] border border-white/14 bg-slate-800/58 p-4 shadow-[0_18px_36px_rgba(0,0,0,0.16)]">
+      <div className="flex h-28 items-center justify-center rounded-[6px] border border-white/10 bg-[linear-gradient(135deg,rgba(71,85,105,0.92),rgba(30,41,59,0.96))] text-slate-300">
         <span className="font-mono text-xs">{item.item_id}</span>
       </div>
       <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold text-white">{item.item_name}</h3>
-          <p className="mt-1 truncate text-xs text-slate-400">
+          <h3 className="break-words text-base font-semibold leading-6 text-white">
+            {item.item_name}
+          </h3>
+          <p className="mt-1 break-words text-xs leading-5 text-slate-300">
             {getCategoryDisplay(item.category)}
           </p>
         </div>
         <StatusBadge status={item.status} />
       </div>
-      <div className="mt-4 flex items-end justify-between">
+      <div className="mt-auto flex items-end justify-between gap-3 pt-5">
         <div>
           <p className="text-xs text-slate-500">卖家</p>
           <p className="mt-1 text-xs font-medium text-slate-300">
@@ -177,19 +179,19 @@ export default async function ItemsPage({
   const latestItems = allItems.slice(-5).reverse();
 
   return (
-    <div className="space-y-5">
-      <section className="grid gap-4 xl:grid-cols-[1fr_230px]">
-        <div className="book-hero min-h-[220px] rounded-[8px] border border-white/10 p-6 shadow-[0_22px_56px_rgba(0,0,0,0.28)]">
+    <div className="space-y-6">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_270px]">
+        <div className="book-hero min-h-[260px] rounded-[8px] border border-white/14 p-7 shadow-[0_22px_56px_rgba(0,0,0,0.2)] md:p-9">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
             Campus Used Books
           </p>
-          <h2 className="mt-8 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-4xl">
-            让闲置流动，让校园更美好
+          <h2 className="mt-10 max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            校园好物，一键交易
           </h2>
-          <p className="mt-3 max-w-xl text-sm leading-7 text-slate-200">
+          <p className="mt-4 max-w-2xl text-base leading-8 text-slate-100">
             图书、教材、宿舍好物都可以在这里发布和购买。
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3">
             <a href="#publish" className="action-button">
               发布商品
             </a>
@@ -199,7 +201,7 @@ export default async function ItemsPage({
           </div>
         </div>
 
-        <aside className="grid gap-3 rounded-[8px] border border-white/10 bg-slate-950/50 p-4">
+        <aside className="grid gap-3 rounded-[8px] border border-white/14 bg-slate-800/58 p-5">
           <div>
             <p className="text-xs text-slate-500">全部商品</p>
             <p className="mt-1 font-mono text-2xl font-semibold text-white">
@@ -224,8 +226,8 @@ export default async function ItemsPage({
       {successMessage ? <FeedbackBanner type="success" message={successMessage} /> : null}
       {errorMessage ? <FeedbackBanner type="error" message={errorMessage} /> : null}
 
-      <section className="grid gap-4 xl:grid-cols-[1fr_250px]">
-        <div className="glass-panel p-5">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="glass-panel p-5 md:p-6">
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-white">最新商品</h2>
@@ -233,7 +235,7 @@ export default async function ItemsPage({
             </div>
             <span className="chip">{getFilterLabel(activeFilter)}</span>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
             {latestItems.map((item) => (
               <ItemCard key={item.item_id} item={item} />
             ))}

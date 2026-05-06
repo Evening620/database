@@ -46,7 +46,7 @@ export default function RootLayout({
             <main className="content-panel">{children}</main>
           </div>
 
-          <footer className="mx-auto mt-4 max-w-7xl px-2 text-xs text-slate-500">
+          <footer className="mx-auto mt-4 w-full max-w-[1680px] px-2 text-xs text-slate-300">
             校园二手图书交易数据库课程设计
           </footer>
         </div>
