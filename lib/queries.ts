@@ -406,13 +406,14 @@ export async function updateItemPrice(itemId: string, price: number): Promise<vo
       UPDATE item
       SET price = $2
       WHERE item_id = $1
+        AND status = 0
       RETURNING item_id;
     `,
     [itemId, price],
   );
 
   if (result.rowCount === 0) {
-    throw new Error(`未找到商品 ${itemId}，无法修改价格。`);
+    throw new Error(`商品 ${itemId} 不存在，或该商品已经售出，不能修改价格。`);
   }
 }
 

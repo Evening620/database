@@ -421,15 +421,20 @@ export default async function ItemsPage({
           <form action={updateItemPriceAction} className="soft-card space-y-4">
             <div>
               <p className="text-lg font-semibold text-white">商品定价</p>
-              <p className="mt-1 text-sm text-slate-400">先选商品，再更新价格。</p>
+              <p className="mt-1 text-sm text-slate-400">仅未售出商品可以修改价格。</p>
             </div>
             <label className="block space-y-2 text-sm font-medium text-slate-300">
-              商品
-              <select name="itemId" className="form-field" defaultValue="">
+              未售商品
+              <select
+                name="itemId"
+                className="form-field"
+                defaultValue=""
+                disabled={!hasUnsoldItems}
+              >
                 <option value="" disabled>
-                  请选择商品
+                  {hasUnsoldItems ? "请选择商品" : "暂无可定价商品"}
                 </option>
-                {allItems.map((item) => (
+                {unsoldItemsView.map((item) => (
                   <option key={item.item_id} value={item.item_id}>
                     {item.item_name} ({item.item_id})
                   </option>
@@ -453,7 +458,11 @@ export default async function ItemsPage({
                 <input name="price" type="number" min="0" step="0.01" className="form-field" />
               </label>
             </div>
-            <button type="submit" className="secondary-button">
+            <button
+              type="submit"
+              className={`secondary-button ${!hasUnsoldItems ? "cursor-not-allowed opacity-50" : ""}`}
+              disabled={!hasUnsoldItems}
+            >
               更新价格
             </button>
           </form>
