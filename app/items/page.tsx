@@ -260,32 +260,42 @@ export default async function ItemsPage({
         </aside>
       </section>
 
-      <SectionCard
-        title="商品筛选"
-        description={getFilterDescription(activeFilter)}
-        headerExtra={<span className="chip">当前：{getFilterLabel(activeFilter)}</span>}
-      >
-        <div className="mb-5 flex flex-wrap gap-3">
-          <FilterLink href="/items?filter=all" label="全部商品" active={activeFilter === "all"} />
-          <FilterLink href="/items?filter=unsold" label="未售出" active={activeFilter === "unsold"} />
-          <FilterLink
-            href="/items?filter=price_gt_30"
-            label="价格大于 30"
-            active={activeFilter === "price_gt_30"}
-          />
-          <FilterLink
-            href="/items?filter=daily_goods"
-            label="生活用品"
-            active={activeFilter === "daily_goods"}
-          />
-          <FilterLink
-            href="/items?filter=seller_u001"
-            label="u001 发布"
-            active={activeFilter === "seller_u001"}
-          />
-        </div>
-        <ItemTable items={filteredItems} emptyMessage="当前筛选条件下没有商品。" />
-      </SectionCard>
+      <div id="filters" className="scroll-mt-5">
+        <SectionCard
+          title="商品筛选"
+          description={getFilterDescription(activeFilter)}
+          headerExtra={<span className="chip">当前：{getFilterLabel(activeFilter)}</span>}
+        >
+          <div className="mb-5 flex flex-wrap gap-3">
+            <FilterLink
+              href="/items?filter=all#filters"
+              label="全部商品"
+              active={activeFilter === "all"}
+            />
+            <FilterLink
+              href="/items?filter=unsold#filters"
+              label="未售出"
+              active={activeFilter === "unsold"}
+            />
+            <FilterLink
+              href="/items?filter=price_gt_30#filters"
+              label="价格大于 30"
+              active={activeFilter === "price_gt_30"}
+            />
+            <FilterLink
+              href="/items?filter=daily_goods#filters"
+              label="生活用品"
+              active={activeFilter === "daily_goods"}
+            />
+            <FilterLink
+              href="/items?filter=seller_u001#filters"
+              label="u001 发布"
+              active={activeFilter === "seller_u001"}
+            />
+          </div>
+          <ItemTable items={filteredItems} emptyMessage="当前筛选条件下没有商品。" />
+        </SectionCard>
+      </div>
 
       <SectionCard
         title="用户操作区"
